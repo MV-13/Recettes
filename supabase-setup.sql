@@ -65,7 +65,8 @@ CREATE TABLE IF NOT EXISTS steps (
   recipe_id   uuid REFERENCES recipes(id) ON DELETE CASCADE,
   step_number integer NOT NULL,
   content     text NOT NULL,
-  image_url   text
+  image_url   text,
+  section     text  -- titre de section optionnel (ex: "Ganache", "Biscuit")
 );
 
 -- ── Index pour les performances ──────────────────────────────
@@ -82,6 +83,7 @@ CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
 
+DROP TRIGGER IF EXISTS recipes_updated_at ON recipes;
 CREATE TRIGGER recipes_updated_at
   BEFORE UPDATE ON recipes
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
@@ -99,6 +101,21 @@ ALTER TABLE ingredients    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE steps          ENABLE ROW LEVEL SECURITY;
 
 -- Lecture publique (recettes publiées seulement)
+DROP POLICY IF EXISTS "public_read_categories"        ON categories;
+DROP POLICY IF EXISTS "public_read_tags"              ON tags;
+DROP POLICY IF EXISTS "public_read_recipes"           ON recipes;
+DROP POLICY IF EXISTS "public_read_recipe_categories" ON recipe_categories;
+DROP POLICY IF EXISTS "public_read_recipe_tags"       ON recipe_tags;
+DROP POLICY IF EXISTS "public_read_ingredients"       ON ingredients;
+DROP POLICY IF EXISTS "public_read_steps"             ON steps;
+DROP POLICY IF EXISTS "auth_all_categories"           ON categories;
+DROP POLICY IF EXISTS "auth_all_tags"                 ON tags;
+DROP POLICY IF EXISTS "auth_all_recipes"              ON recipes;
+DROP POLICY IF EXISTS "auth_all_recipe_categories"    ON recipe_categories;
+DROP POLICY IF EXISTS "auth_all_recipe_tags"          ON recipe_tags;
+DROP POLICY IF EXISTS "auth_all_ingredients"          ON ingredients;
+DROP POLICY IF EXISTS "auth_all_steps"                ON steps;
+
 CREATE POLICY "public_read_categories" ON categories FOR SELECT USING (true);
 CREATE POLICY "public_read_tags"       ON tags       FOR SELECT USING (true);
 

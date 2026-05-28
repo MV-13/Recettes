@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recette – Mes Recettes</title>
+  <title>Recette – Les recettes de Marine</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
   <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
   <header class="header">
     <nav class="nav container">
-      <a href="index.html" class="nav-logo">🍽 Mes Recettes</a>
+      <a href="index.html" class="nav-logo">🍽 Les recettes de Marine</a>
       <ul class="nav-categories" id="nav-categories" aria-label="Catégories"></ul>
       <div class="nav-right">
         <button class="nav-search-btn" id="search-toggle-btn" aria-label="Rechercher">
@@ -65,6 +65,16 @@
 
         <div class="recipe-meta" id="recipe-meta" role="list" aria-label="Informations recette"></div>
 
+        <!-- Ajusteur de portions (affiché seulement si la recette a un nombre de portions) -->
+        <div class="servings-adjuster" id="servings-adjuster" style="display:none" aria-label="Ajuster le nombre de portions">
+          <span class="servings-label">Pour</span>
+          <button class="servings-btn" id="servings-minus" aria-label="Diminuer">−</button>
+          <output class="servings-count" id="servings-count" for="servings-minus servings-plus">4</output>
+          <button class="servings-btn" id="servings-plus" aria-label="Augmenter">+</button>
+          <span class="servings-unit">personne<span id="servings-plural"></span></span>
+          <button class="servings-reset" id="servings-reset" title="Remettre la quantité d'origine">↺ Réinitialiser</button>
+        </div>
+
         <div id="recipe-tags" role="list" aria-label="Tags"></div>
 
         <!-- Ingredients + Steps -->
@@ -100,7 +110,7 @@
   <!-- ═══ FOOTER ══════════════════════════════════════════════ -->
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="index.html" class="footer-logo">🍽 Mes Recettes</a>
+      <a href="index.html" class="footer-logo">🍽 Les recettes de Marine</a>
       <span>Fait avec ❤️</span>
     </div>
   </footer>

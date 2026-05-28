@@ -225,9 +225,10 @@ function addStepRow(data = {}) {
   const row = document.createElement('div');
   row.className = 'step-row';
   row.innerHTML = `
+    <input type="text" placeholder="Section (ex : Ganache, Biscuit…)" class="inp-section" value="${data.section || ''}">
     <span class="step-num">${idx}</span>
     <textarea placeholder="Description de l'étape…" class="inp-step">${data.content || ''}</textarea>
-    <button type="button" class="btn-row-remove" onclick="removeStepRow(this)">×</button>`;
+    <button type="button" class="btn-row-remove" onclick="removeStepRow(this)" title="Supprimer cette étape">×</button>`;
   container.appendChild(row);
 }
 
@@ -355,6 +356,7 @@ async function saveRecipe() {
       recipe_id: recipeId,
       step_number: i + 1,
       content: row.querySelector('.inp-step').value.trim(),
+      section: row.querySelector('.inp-section').value.trim() || null,
     }))
     .filter(s => s.content);
   if (steps.length) await db.from('steps').insert(steps);
@@ -404,6 +406,9 @@ function setupCategoryModal() {
   document.getElementById('add-category-btn')?.addEventListener('click', () => {
     document.getElementById('category-form').reset();
     document.getElementById('cat-id').value = '';
+    document.getElementById('cat-current-image').value = '';
+    document.getElementById('cat-image-preview').style.display = 'none';
+    document.getElementById('cat-upload-label').textContent = '📷 Choisir une photo';
     document.getElementById('cat-modal-title').textContent = 'Nouvelle catégorie';
     openModal('category-modal');
   });
@@ -411,6 +416,29 @@ function setupCategoryModal() {
   document.getElementById('cat-name')?.addEventListener('input', e => {
     const idInput = document.getElementById('cat-id');
     if (!idInput.value) document.getElementById('cat-slug').value = generateSlug(e.target.value);
+  });
+
+  // Upload photo catégorie
+  document.getElementById('cat-image-upload')?.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const label = document.getElementById('cat-upload-label');
+    label.textContent = 'Upload en cours…';
+
+    const path = `categories/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+    const { data, error } = await db.storage
+      .from(SITE_CONFIG.imagesBucket)
+      .upload(path, file, { contentType: file.type });
+
+    if (error) { showToast('Erreur upload : ' + error.message, 'error'); label.textContent = '📷 Choisir une photo'; return; }
+
+    const { data: { publicUrl } } = db.storage.from(SITE_CONFIG.imagesBucket).getPublicUrl(data.path);
+    document.getElementById('cat-current-image').value = publicUrl;
+    const preview = document.getElementById('cat-image-preview');
+    preview.src = publicUrl;
+    preview.style.display = 'block';
+    label.textContent = 'Photo uploadée ✓';
+    showToast('Photo uploadée.', 'success');
   });
 
   document.getElementById('category-form')?.addEventListener('submit', async e => {
@@ -421,6 +449,7 @@ function setupCategoryModal() {
       name: f.querySelector('#cat-name').value.trim(),
       slug: f.querySelector('#cat-slug').value.trim(),
       description: f.querySelector('#cat-description').value.trim() || null,
+      image_url: f.querySelector('#cat-current-image').value || null,
     };
 
     const { error } = id
@@ -441,6 +470,16 @@ function editCategory(c) {
   f.querySelector('#cat-name').value = c.name;
   f.querySelector('#cat-slug').value = c.slug;
   f.querySelector('#cat-description').value = c.description || '';
+  f.querySelector('#cat-current-image').value = c.image_url || '';
+  const preview = document.getElementById('cat-image-preview');
+  if (c.image_url) {
+    preview.src = c.image_url;
+    preview.style.display = 'block';
+    document.getElementById('cat-upload-label').textContent = 'Changer la photo';
+  } else {
+    preview.style.display = 'none';
+    document.getElementById('cat-upload-label').textContent = '📷 Choisir une photo';
+  }
   document.getElementById('cat-modal-title').textContent = 'Modifier la catégorie';
   openModal('category-modal');
 }

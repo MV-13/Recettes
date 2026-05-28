@@ -692,6 +692,82 @@ main { flex: 1; }
   border-top: 1px solid var(--border);
 }
 
+/* ─── Ajusteur de portions ─────────────────────────────────── */
+.servings-adjuster {
+  display: none; /* affiché par JS si la recette a des portions */
+  align-items: center;
+  gap: .6rem;
+  padding: .9rem 1.2rem;
+  background: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.servings-label,
+.servings-unit {
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.servings-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: #fff;
+  color: var(--primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  display: grid; place-items: center;
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+.servings-btn:hover { background: var(--primary); color: #fff; }
+.servings-btn:disabled { opacity: .35; pointer-events: none; }
+
+.servings-count {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  min-width: 2ch;
+  text-align: center;
+  line-height: 1;
+}
+
+.servings-reset {
+  display: none; /* masqué quand non modifié */
+  align-items: center;
+  gap: .3rem;
+  margin-left: auto;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: .3rem .7rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: #fff;
+  transition: all .15s;
+}
+.servings-reset:hover { color: var(--primary); border-color: var(--primary); }
+
+/* ─── Sections dans les étapes ─────────────────────────────── */
+.step-section-header {
+  list-style: none;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+  padding: .5rem 0 .25rem;
+  border-bottom: 2px solid var(--primary-light);
+  margin-bottom: .25rem;
+  margin-top: 1rem;
+}
+.step-section-header:first-child { margin-top: 0; }
+
 /* Print */
 @media print {
   .header, .recipe-back, .recipe-actions, .ingredient-checkbox, .checkmark, .ingredient-check { display: none !important; }
@@ -1063,11 +1139,32 @@ body.admin-body { background: #F5F5F5; }
 
 .step-row {
   display: grid;
+  grid-template-areas:
+    "section  section  remove"
+    "num      content  remove";
   grid-template-columns: auto 1fr auto;
-  gap: .5rem;
+  gap: .35rem .5rem;
   align-items: start;
 }
+.inp-section {
+  grid-area: section;
+  padding: .4rem .7rem;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--r-sm);
+  font: inherit;
+  font-size: .8rem;
+  color: var(--primary);
+  font-weight: 600;
+  background: var(--primary-light);
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+}
+.inp-section:focus { border-color: var(--primary); border-style: solid; }
+.inp-section::placeholder { color: var(--text-muted); font-weight: 400; }
+
 .step-num {
+  grid-area: num;
   width: 32px; height: 32px;
   background: var(--primary);
   color: #fff;
@@ -1079,6 +1176,7 @@ body.admin-body { background: #F5F5F5; }
   margin-top: .4rem;
 }
 .inp-step {
+  grid-area: content;
   padding: .5rem .7rem;
   border: 1.5px solid #DDD;
   border-radius: var(--r-sm);
@@ -1091,6 +1189,7 @@ body.admin-body { background: #F5F5F5; }
 }
 .inp-step:focus { border-color: var(--primary); }
 .btn-row-remove {
+  grid-area: remove;
   width: 28px; height: 28px;
   border-radius: 50%;
   background: #FEE;
@@ -1101,7 +1200,7 @@ body.admin-body { background: #F5F5F5; }
   flex-shrink: 0;
   margin-top: .4rem;
 }
-.btn-row-remove:hover { background: #FCCCC; }
+.btn-row-remove:hover { background: #FCCCCC; }
 
 /* ═══════════════════════════════════════════════════════════════
    MODAL

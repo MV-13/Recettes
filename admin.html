@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administration – Mes Recettes</title>
+  <title>Administration – Les recettes de Marine</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +37,7 @@
     <!-- Admin top bar -->
     <div class="admin-header">
       <div class="admin-header-inner">
-        <span class="admin-title">🍽 Administration</span>
+        <span class="admin-title">🍽 Les recettes de Marine – Admin</span>
         <div style="display:flex;align-items:center;gap:1rem">
           <span class="admin-user" id="admin-email"></span>
           <a href="index.html" class="btn btn-ghost" style="font-size:.82rem;padding:.35rem .9rem">← Site</a>
@@ -238,6 +238,16 @@
           <div class="form-group">
             <label class="form-label" for="cat-description">Description</label>
             <textarea class="form-textarea" id="cat-description" rows="2" placeholder="Des plats généreux pour le repas du soir…"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Photo de la catégorie</label>
+            <div class="image-upload-area">
+              <label class="upload-label" for="cat-image-upload" id="cat-upload-label">📷 Choisir une photo</label>
+              <input type="file" id="cat-image-upload" accept="image/*">
+              <p class="form-hint">Recommandé : format paysage, min 800×500 px</p>
+              <img id="cat-image-preview" alt="Aperçu" style="display:none;width:100%;max-height:160px;object-fit:cover;border-radius:var(--r-sm);margin-top:.75rem">
+            </div>
+            <input type="hidden" id="cat-current-image">
           </div>
         </div>
         <div class="modal-footer">
