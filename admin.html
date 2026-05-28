@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration – Mes Recettes</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+
+  <!-- ═══ LOGIN ════════════════════════════════════════════════ -->
+  <section id="login-section">
+    <div class="login-card">
+      <h1>🔐 Administration</h1>
+      <p>Connectez-vous pour gérer vos recettes.</p>
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" type="email" id="email" required autocomplete="username" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Mot de passe</label>
+          <input class="form-input" type="password" id="password" required autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.5rem">Se connecter</button>
+      </form>
+      <p style="margin-top:1rem;text-align:center"><a href="index.html" style="color:var(--text-muted);font-size:.85rem">← Retour au site</a></p>
+    </div>
+  </section>
+
+  <!-- ═══ DASHBOARD ═════════════════════════════════════════════ -->
+  <section id="dashboard-section">
+
+    <!-- Admin top bar -->
+    <div class="admin-header">
+      <div class="admin-header-inner">
+        <span class="admin-title">🍽 Administration</span>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <span class="admin-user" id="admin-email"></span>
+          <a href="index.html" class="btn btn-ghost" style="font-size:.82rem;padding:.35rem .9rem">← Site</a>
+          <button id="logout-btn" class="btn btn-ghost" style="font-size:.82rem;padding:.35rem .9rem">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-main">
+      <nav class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="recipes" role="tab" aria-selected="true">Recettes</button>
+        <button class="tab-btn" data-tab="categories" role="tab" aria-selected="false">Catégories</button>
+        <button class="tab-btn" data-tab="tags" role="tab" aria-selected="false">Tags</button>
+      </nav>
+
+      <!-- ── RECIPES TAB ──────────────────────────────────── -->
+      <div id="tab-recipes" class="tab-panel active" role="tabpanel">
+        <div class="table-toolbar">
+          <h2 style="font-size:1.1rem;font-weight:700">Toutes les recettes</h2>
+          <button id="add-recipe-btn" class="btn btn-primary">+ Nouvelle recette</button>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Préparation</th>
+              <th>Cuisson</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recipes-tbody">
+            <tr><td colspan="5" class="loading-cell">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── CATEGORIES TAB ──────────────────────────────── -->
+      <div id="tab-categories" class="tab-panel" role="tabpanel">
+        <div class="table-toolbar">
+          <h2 style="font-size:1.1rem;font-weight:700">Catégories</h2>
+          <button id="add-category-btn" class="btn btn-primary">+ Nouvelle catégorie</button>
+        </div>
+        <div id="categories-list"></div>
+      </div>
+
+      <!-- ── TAGS TAB ────────────────────────────────────── -->
+      <div id="tab-tags" class="tab-panel" role="tabpanel">
+        <div class="table-toolbar">
+          <h2 style="font-size:1.1rem;font-weight:700">Tags</h2>
+          <button id="add-tag-btn" class="btn btn-primary">+ Nouveau tag</button>
+        </div>
+        <div id="tags-list"></div>
+      </div>
+
+    </div><!-- /admin-main -->
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       RECIPE MODAL
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal" id="recipe-modal" role="dialog" aria-modal="true" aria-labelledby="recipe-modal-title">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h2 class="modal-title" id="recipe-modal-title">Nouvelle recette</h2>
+        <button class="modal-close" onclick="closeModal('recipe-modal')" aria-label="Fermer">✕</button>
+      </div>
+
+      <form id="recipe-form" novalidate>
+        <div class="modal-body">
+
+          <!-- Titre + Slug -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="r-title">Titre *</label>
+              <input class="form-input" type="text" id="r-title" required placeholder="Tarte tatin aux pommes">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="r-slug">Slug (URL) *</label>
+              <input class="form-input" type="text" id="r-slug" required placeholder="tarte-tatin-aux-pommes">
+              <p class="form-hint">Généré automatiquement à partir du titre.</p>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label class="form-label" for="r-description">Description courte</label>
+            <textarea class="form-textarea" id="r-description" rows="2" placeholder="Un dessert classique, fondant et caramélisé…"></textarea>
+          </div>
+
+          <!-- Image -->
+          <div class="form-group">
+            <label class="form-label">Image</label>
+            <div class="image-upload-area">
+              <label class="upload-label" for="r-image-upload" id="upload-label">📷 Choisir une image</label>
+              <input type="file" id="r-image-upload" accept="image/*">
+              <p class="form-hint">JPEG, PNG, WebP – max recommandé 2 Mo</p>
+              <img id="r-image-preview" alt="Aperçu">
+            </div>
+            <input type="hidden" id="r-current-image">
+          </div>
+
+          <!-- Temps + Portions + Difficulté -->
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label" for="r-prep-time">Préparation (min)</label>
+              <input class="form-input" type="number" id="r-prep-time" min="0" placeholder="15">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="r-cook-time">Cuisson (min)</label>
+              <input class="form-input" type="number" id="r-cook-time" min="0" placeholder="45">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="r-servings">Portions</label>
+              <input class="form-input" type="number" id="r-servings" min="1" placeholder="4">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="r-difficulty">Difficulté</label>
+              <select class="form-select" id="r-difficulty">
+                <option value="">– Choisir –</option>
+                <option value="facile">Facile</option>
+                <option value="moyen">Moyen</option>
+                <option value="difficile">Difficile</option>
+              </select>
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:.2rem">
+              <label class="form-toggle">
+                <input type="checkbox" id="r-published">
+                <span class="toggle-track"></span>
+                <span>Publier la recette</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Catégories -->
+          <div class="form-group">
+            <label class="form-label">Catégories</label>
+            <div class="checkboxes-group" id="r-categories"></div>
+          </div>
+
+          <!-- Tags -->
+          <div class="form-group">
+            <label class="form-label">Tags</label>
+            <div class="checkboxes-group" id="r-tags"></div>
+          </div>
+
+          <!-- Ingrédients -->
+          <div class="form-group">
+            <label class="form-label">Ingrédients</label>
+            <p class="form-hint" style="margin-bottom:.5rem">Quantité · Unité · Nom de l'ingrédient</p>
+            <div class="dynamic-rows-container" id="ingredients-rows"></div>
+            <button type="button" id="add-ingredient-btn" class="btn btn-ghost" style="font-size:.82rem;padding:.35rem .9rem">+ Ajouter un ingrédient</button>
+          </div>
+
+          <!-- Étapes -->
+          <div class="form-group">
+            <label class="form-label">Étapes de préparation</label>
+            <div class="dynamic-rows-container" id="steps-rows"></div>
+            <button type="button" id="add-step-btn" class="btn btn-ghost" style="font-size:.82rem;padding:.35rem .9rem">+ Ajouter une étape</button>
+          </div>
+
+        </div><!-- /modal-body -->
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal('recipe-modal')">Annuler</button>
+          <button type="submit" class="btn-save">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CATEGORY MODAL
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal" id="category-modal" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="cat-modal-title">Nouvelle catégorie</h2>
+        <button class="modal-close" onclick="closeModal('category-modal')" aria-label="Fermer">✕</button>
+      </div>
+      <form id="category-form">
+        <div class="modal-body">
+          <input type="hidden" id="cat-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="cat-name">Nom *</label>
+              <input class="form-input" type="text" id="cat-name" required placeholder="Plats principaux">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cat-slug">Slug *</label>
+              <input class="form-input" type="text" id="cat-slug" required placeholder="plats-principaux">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cat-description">Description</label>
+            <textarea class="form-textarea" id="cat-description" rows="2" placeholder="Des plats généreux pour le repas du soir…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal('category-modal')">Annuler</button>
+          <button type="submit" class="btn-save">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TAG MODAL
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal" id="tag-modal" role="dialog" aria-modal="true" aria-labelledby="tag-modal-title">
+    <div class="modal-card" style="max-width:460px">
+      <div class="modal-header">
+        <h2 class="modal-title" id="tag-modal-title">Nouveau tag</h2>
+        <button class="modal-close" onclick="closeModal('tag-modal')" aria-label="Fermer">✕</button>
+      </div>
+      <form id="tag-form">
+        <div class="modal-body">
+          <input type="hidden" id="tag-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="tag-name-input">Nom *</label>
+              <input class="form-input" type="text" id="tag-name-input" required placeholder="Végétarien">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tag-slug-input">Slug *</label>
+              <input class="form-input" type="text" id="tag-slug-input" required placeholder="vegetarien">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="tag-color">Couleur</label>
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <input type="color" id="tag-color" value="#C84B31" style="width:50px;height:36px;border:1.5px solid #DDD;border-radius:var(--r-sm);cursor:pointer">
+              <span class="form-hint" style="margin:0">Couleur d'accentuation du tag</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal('tag-modal')">Annuler</button>
+          <button type="submit" class="btn-save">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/admin.js"></script>
+
+</body>
+</html>

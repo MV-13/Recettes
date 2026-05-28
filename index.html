@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes Recettes</title>
+  <meta name="description" content="Des recettes simples et savoureuses, faites maison.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
+  <header class="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav-logo">🍽 Mes Recettes</a>
+
+      <ul class="nav-categories" id="nav-categories" aria-label="Catégories"></ul>
+
+      <div class="nav-right">
+        <button class="nav-search-btn" id="search-toggle-btn" aria-label="Rechercher" title="Rechercher">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <a href="admin.html" class="nav-admin-link">Admin</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <div class="search-overlay" id="search-overlay">
+      <form class="search-overlay-form" onsubmit="event.preventDefault(); const q=this.querySelector('input').value.trim(); if(q) window.location.href='category.html?search='+encodeURIComponent(q)">
+        <input type="search" class="search-overlay-input" placeholder="Rechercher une recette…" autofocus>
+        <button type="submit" class="btn btn-primary" style="padding:.6rem 1rem">Rechercher</button>
+      </form>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Navigation mobile">
+      <a href="category.html" class="nav-link">Toutes les recettes</a>
+      <div id="mobile-nav-categories"></div>
+      <a href="admin.html" class="nav-link">Admin</a>
+    </nav>
+  </header>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════ -->
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-content container">
+        <h1 class="hero-title">Mes petits plats du quotidien</h1>
+        <p class="hero-subtitle">Des recettes simples, savoureuses et toujours faites avec amour.</p>
+        <form class="hero-search" id="hero-search-form">
+          <input type="search" placeholder="Que voulez-vous cuisiner ?" aria-label="Rechercher une recette">
+          <button type="submit">Rechercher</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Dernières recettes -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Dernières recettes</h2>
+          <a href="category.html" class="section-link">Voir tout →</a>
+        </div>
+        <div class="recipes-grid" id="latest-recipes-grid"></div>
+      </div>
+    </section>
+
+    <!-- Catégories -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Les catégories</h2>
+        </div>
+        <div class="categories-grid" id="categories-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="footer-logo">🍽 Mes Recettes</span>
+      <span>Fait avec ❤️</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Search toggle
+    const searchToggle = document.getElementById('search-toggle-btn');
+    const searchOverlay = document.getElementById('search-overlay');
+    searchToggle?.addEventListener('click', () => {
+      const open = searchOverlay.classList.toggle('open');
+      if (open) searchOverlay.querySelector('input')?.focus();
+    });
+  </script>
+
+</body>
+</html>

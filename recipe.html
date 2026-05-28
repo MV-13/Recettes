@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recette – Mes Recettes</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════════ -->
+  <header class="header">
+    <nav class="nav container">
+      <a href="index.html" class="nav-logo">🍽 Mes Recettes</a>
+      <ul class="nav-categories" id="nav-categories" aria-label="Catégories"></ul>
+      <div class="nav-right">
+        <button class="nav-search-btn" id="search-toggle-btn" aria-label="Rechercher">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <div class="search-overlay" id="search-overlay">
+      <form class="search-overlay-form" onsubmit="event.preventDefault(); const q=this.querySelector('input').value.trim(); if(q) window.location.href='category.html?search='+encodeURIComponent(q)">
+        <input type="search" class="search-overlay-input" placeholder="Rechercher une recette…">
+        <button type="submit" class="btn btn-primary" style="padding:.6rem 1rem">Rechercher</button>
+      </form>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Navigation mobile">
+      <a href="index.html" class="nav-link">Accueil</a>
+      <a href="category.html" class="nav-link">Toutes les recettes</a>
+    </nav>
+  </header>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════ -->
+  <main>
+
+    <!-- Hero image -->
+    <div class="recipe-hero" id="recipe-hero">
+      <a href="javascript:history.back()" class="recipe-back">← Retour</a>
+    </div>
+
+    <!-- Loading / Error states -->
+    <div id="recipe-loading" class="container" style="padding-top:3rem">
+      <p style="text-align:center;color:var(--text-muted);">Chargement de la recette…</p>
+    </div>
+    <p id="recipe-error" class="container"></p>
+
+    <!-- Recipe content -->
+    <div id="recipe-content" style="display:none">
+      <article class="recipe-article">
+
+        <nav class="recipe-breadcrumb" id="recipe-breadcrumb" aria-label="Fil d'Ariane"></nav>
+
+        <h1 id="recipe-title"></h1>
+        <p id="recipe-description"></p>
+
+        <div class="recipe-meta" id="recipe-meta" role="list" aria-label="Informations recette"></div>
+
+        <div id="recipe-tags" role="list" aria-label="Tags"></div>
+
+        <!-- Ingredients + Steps -->
+        <div class="recipe-body">
+
+          <section class="ingredients-section">
+            <h2 class="recipe-section-title">Ingrédients</h2>
+            <ul id="ingredients-list" aria-label="Liste des ingrédients"></ul>
+          </section>
+
+          <section class="steps-section">
+            <h2 class="recipe-section-title">Préparation</h2>
+            <ol id="steps-list" aria-label="Étapes de préparation"></ol>
+          </section>
+
+        </div>
+
+        <div class="recipe-actions">
+          <button id="print-btn" class="btn btn-ghost">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Imprimer
+          </button>
+          <a href="category.html" class="btn btn-ghost">Toutes les recettes</a>
+        </div>
+
+      </article>
+    </div>
+
+  </main>
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="index.html" class="footer-logo">🍽 Mes Recettes</a>
+      <span>Fait avec ❤️</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/recipe.js"></script>
+  <script>
+    const searchToggle = document.getElementById('search-toggle-btn');
+    const searchOverlay = document.getElementById('search-overlay');
+    searchToggle?.addEventListener('click', () => {
+      const open = searchOverlay.classList.toggle('open');
+      if (open) searchOverlay.querySelector('input')?.focus();
+    });
+  </script>
+
+</body>
+</html>
