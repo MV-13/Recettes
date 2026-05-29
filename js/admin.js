@@ -409,6 +409,9 @@ function setupCategoryModal() {
     document.getElementById('cat-current-image').value = '';
     document.getElementById('cat-image-preview').style.display = 'none';
     document.getElementById('cat-upload-label').textContent = '📷 Choisir une photo';
+    document.getElementById('cat-current-banner').value = '';
+    document.getElementById('cat-banner-preview').style.display = 'none';
+    document.getElementById('cat-banner-upload-label').textContent = '🖼 Choisir un bandeau';
     document.getElementById('cat-modal-title').textContent = 'Nouvelle catégorie';
     openModal('category-modal');
   });
@@ -418,7 +421,7 @@ function setupCategoryModal() {
     if (!idInput.value) document.getElementById('cat-slug').value = generateSlug(e.target.value);
   });
 
-  // Upload photo catégorie
+  // Upload photo miniature catégorie
   document.getElementById('cat-image-upload')?.addEventListener('change', async e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -441,6 +444,29 @@ function setupCategoryModal() {
     showToast('Photo uploadée.', 'success');
   });
 
+  // Upload bandeau catégorie
+  document.getElementById('cat-banner-upload')?.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const label = document.getElementById('cat-banner-upload-label');
+    label.textContent = 'Upload en cours…';
+
+    const path = `categories/banners/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+    const { data, error } = await db.storage
+      .from(SITE_CONFIG.imagesBucket)
+      .upload(path, file, { contentType: file.type });
+
+    if (error) { showToast('Erreur upload : ' + error.message, 'error'); label.textContent = '🖼 Choisir un bandeau'; return; }
+
+    const { data: { publicUrl } } = db.storage.from(SITE_CONFIG.imagesBucket).getPublicUrl(data.path);
+    document.getElementById('cat-current-banner').value = publicUrl;
+    const preview = document.getElementById('cat-banner-preview');
+    preview.src = publicUrl;
+    preview.style.display = 'block';
+    label.textContent = 'Bandeau uploadé ✓';
+    showToast('Bandeau uploadé.', 'success');
+  });
+
   document.getElementById('category-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const f = e.target;
@@ -450,6 +476,7 @@ function setupCategoryModal() {
       slug: f.querySelector('#cat-slug').value.trim(),
       description: f.querySelector('#cat-description').value.trim() || null,
       image_url: f.querySelector('#cat-current-image').value || null,
+      banner_image_url: f.querySelector('#cat-current-banner').value || null,
     };
 
     const { error } = id
@@ -480,6 +507,18 @@ function editCategory(c) {
     preview.style.display = 'none';
     document.getElementById('cat-upload-label').textContent = '📷 Choisir une photo';
   }
+
+  f.querySelector('#cat-current-banner').value = c.banner_image_url || '';
+  const bannerPreview = document.getElementById('cat-banner-preview');
+  if (c.banner_image_url) {
+    bannerPreview.src = c.banner_image_url;
+    bannerPreview.style.display = 'block';
+    document.getElementById('cat-banner-upload-label').textContent = 'Changer le bandeau';
+  } else {
+    bannerPreview.style.display = 'none';
+    document.getElementById('cat-banner-upload-label').textContent = '🖼 Choisir un bandeau';
+  }
+
   document.getElementById('cat-modal-title').textContent = 'Modifier la catégorie';
   openModal('category-modal');
 }

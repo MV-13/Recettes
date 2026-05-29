@@ -46,7 +46,7 @@ async function setupPageHeader(slug, search) {
 
   const { data } = await db
     .from('categories')
-    .select('name, description, image_url')
+    .select('name, description, image_url, banner_image_url')
     .eq('slug', slug)
     .single();
 
@@ -55,8 +55,9 @@ async function setupPageHeader(slug, search) {
     if (titleEl) titleEl.textContent = data.name;
     if (descEl && data.description) descEl.textContent = data.description;
     const hero = document.getElementById('category-hero');
-    if (hero && data.image_url) {
-      hero.style.backgroundImage = `url(${data.image_url})`;
+    const heroImage = data.banner_image_url || data.image_url;
+    if (hero && heroImage) {
+      hero.style.backgroundImage = `url(${heroImage})`;
       hero.classList.add('has-image');
     }
   }
