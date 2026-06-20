@@ -7,7 +7,7 @@ const SITE_CONFIG = {
   siteName: 'Les recettes de Marine',
   siteDescription: 'Des recettes simples et savoureuses',
   recipesPerPage: 12,
-  latestRecipesCount: 6,
+  latestRecipesCount: 2,
   imagesBucket: 'recipe-images',
   fallbackImage: null, // laisser null pour utiliser le placeholder CSS
 };
