@@ -101,8 +101,57 @@ async function loadNavCategories() {
   }
 
   if (mobileList) {
-    mobileList.innerHTML = data.map(c =>
-      `<a href="category.html?slug=${c.slug}" class="nav-link">${c.name}</a>`
-    ).join('');
+    mobileList.innerHTML = data.map(c => `
+      <div class="mobile-nav-category">
+        <div class="mobile-nav-category-row">
+          <a href="category.html?slug=${c.slug}" class="nav-link mobile-nav-category-link">${c.name}</a>
+          <button type="button" class="mobile-nav-category-toggle" data-slug="${c.slug}" aria-expanded="false" aria-label="Afficher les recettes de ${c.name}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+        <div class="mobile-nav-category-recipes" id="mobile-nav-recipes-${c.slug}" hidden></div>
+      </div>`).join('');
+
+    mobileList.querySelectorAll('.mobile-nav-category-toggle').forEach(btn => {
+      btn.addEventListener('click', () => toggleMobileNavCategory(btn));
+    });
   }
+}
+
+let _navRecipesBySlug = null;
+
+async function toggleMobileNavCategory(btn) {
+  const slug = btn.dataset.slug;
+  const panel = document.getElementById(`mobile-nav-recipes-${slug}`);
+  if (!panel) return;
+
+  const open = panel.hidden;
+  panel.hidden = !open;
+  btn.setAttribute('aria-expanded', String(open));
+  if (!open || panel.dataset.loaded) return;
+
+  panel.innerHTML = '<span class="mobile-nav-recipes-status">Chargement…</span>';
+
+  if (!_navRecipesBySlug) {
+    const { data } = await db
+      .from('recipes')
+      .select('title, slug, recipe_categories(categories(slug))')
+      .eq('published', true)
+      .order('title');
+
+    _navRecipesBySlug = {};
+    (data || []).forEach(r => {
+      r.recipe_categories?.forEach(rc => {
+        const catSlug = rc.categories?.slug;
+        if (!catSlug) return;
+        (_navRecipesBySlug[catSlug] ||= []).push(r);
+      });
+    });
+  }
+
+  const recipes = _navRecipesBySlug[slug] || [];
+  panel.dataset.loaded = 'true';
+  panel.innerHTML = recipes.length
+    ? recipes.map(r => `<a href="recipe.html?slug=${r.slug}" class="nav-link">${r.title}</a>`).join('')
+    : '<span class="mobile-nav-recipes-status">Aucune recette.</span>';
 }
