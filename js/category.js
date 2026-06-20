@@ -85,6 +85,7 @@ async function loadAllTags() {
         activeTags.add(slug);
         btn.classList.add('active');
       }
+      updateFiltersActiveCount();
       applyFilters();
     });
   });
@@ -167,7 +168,45 @@ function renderRecipes() {
   if (btn) btn.style.display = filtered.length > offset ? 'block' : 'none';
 }
 
+function setupFiltersToggle() {
+  const toggleBtn = document.getElementById('filters-toggle-btn');
+  const dropdown = document.getElementById('filters-dropdown');
+  if (!toggleBtn || !dropdown) return;
+
+  const close = () => {
+    dropdown.hidden = true;
+    toggleBtn.setAttribute('aria-expanded', 'false');
+  };
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = dropdown.hidden;
+    dropdown.hidden = !open;
+    toggleBtn.setAttribute('aria-expanded', String(open));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!dropdown.hidden && !dropdown.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+      close();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') close();
+  });
+}
+
+function updateFiltersActiveCount() {
+  const badge = document.getElementById('filters-active-count');
+  if (!badge) return;
+  const count = activeTags.size + (activeDifficulty ? 1 : 0) + (activeMaxTime > 0 ? 1 : 0);
+  badge.textContent = String(count);
+  badge.hidden = count === 0;
+}
+
 function setupFilters() {
+  setupFiltersToggle();
+
   const searchInput = document.getElementById('search-input');
   if (searchInput) {
     let debounce;
@@ -191,6 +230,7 @@ function setupFilters() {
         document.querySelectorAll('.difficulty-filter').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       }
+      updateFiltersActiveCount();
       applyFilters();
     });
   });
@@ -206,6 +246,7 @@ function setupFilters() {
         document.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       }
+      updateFiltersActiveCount();
       applyFilters();
     });
   });
@@ -220,6 +261,7 @@ function setupFilters() {
       document.querySelectorAll('.tag-filter, .difficulty-filter, .time-filter').forEach(b =>
         b.classList.remove('active')
       );
+      updateFiltersActiveCount();
       applyFilters();
     });
   }

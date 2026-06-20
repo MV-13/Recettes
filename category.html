@@ -62,28 +62,39 @@
             </svg>
             <input type="search" id="search-input" placeholder="Filtrer les recettes…" aria-label="Rechercher dans cette catégorie">
           </div>
+          <div class="filters-toggle-wrap">
+            <button id="filters-toggle-btn" class="btn btn-ghost filters-toggle-btn" aria-expanded="false" aria-controls="filters-dropdown">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+              </svg>
+              Filtres
+              <span id="filters-active-count" class="filters-active-badge" hidden>0</span>
+            </button>
+          </div>
           <span id="recipes-count"></span>
           <button id="reset-filters" class="btn btn-ghost" style="font-size:.8rem;padding:.4rem .9rem">Réinitialiser</button>
         </div>
 
-        <div class="filters-row">
-          <span class="filters-label">Difficulté</span>
-          <button class="difficulty-filter" data-value="facile">Facile</button>
-          <button class="difficulty-filter" data-value="moyen">Moyen</button>
-          <button class="difficulty-filter" data-value="difficile">Difficile</button>
-        </div>
+        <div class="filters-dropdown" id="filters-dropdown" hidden>
+          <div class="filters-row">
+            <span class="filters-label">Difficulté</span>
+            <button class="difficulty-filter" data-value="facile">Facile</button>
+            <button class="difficulty-filter" data-value="moyen">Moyen</button>
+            <button class="difficulty-filter" data-value="difficile">Difficile</button>
+          </div>
 
-        <div class="filters-row">
-          <span class="filters-label">Temps total</span>
-          <button class="time-filter" data-value="20">≤ 20 min</button>
-          <button class="time-filter" data-value="30">≤ 30 min</button>
-          <button class="time-filter" data-value="60">≤ 1 h</button>
-          <button class="time-filter" data-value="120">≤ 2 h</button>
-        </div>
+          <div class="filters-row">
+            <span class="filters-label">Temps total</span>
+            <button class="time-filter" data-value="20">≤ 20 min</button>
+            <button class="time-filter" data-value="30">≤ 30 min</button>
+            <button class="time-filter" data-value="60">≤ 1 h</button>
+            <button class="time-filter" data-value="120">≤ 2 h</button>
+          </div>
 
-        <div class="filters-row">
-          <span class="filters-label">Tags</span>
-          <div id="tags-filter" style="display:flex;flex-wrap:wrap;gap:.35rem;"></div>
+          <div class="filters-row">
+            <span class="filters-label">Tags</span>
+            <div id="tags-filter" style="display:flex;flex-wrap:wrap;gap:.35rem;"></div>
+          </div>
         </div>
 
       </div>
