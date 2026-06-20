@@ -173,6 +173,7 @@ main { flex: 1; }
 .mobile-nav.nav-open { display: flex; }
 .mobile-nav .nav-link { padding: .65rem .5rem; font-size: 1rem; border-radius: 0; border-bottom: 1px solid var(--border-light); }
 .mobile-nav .nav-link:last-child { border-bottom: none; }
+#mobile-nav-categories { display: contents; }
 
 /* Search overlay */
 .search-overlay {

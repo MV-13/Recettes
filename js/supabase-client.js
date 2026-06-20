@@ -85,15 +85,24 @@ function renderSkeletons(container, count = 6) {
     </div>`).join('');
 }
 
-// Charge et affiche les catégories dans la nav
+// Charge et affiche les catégories dans la nav (desktop + menu mobile)
 async function loadNavCategories() {
   const navList = document.getElementById('nav-categories');
-  if (!navList) return;
+  const mobileList = document.getElementById('mobile-nav-categories');
+  if (!navList && !mobileList) return;
 
   const { data } = await db.from('categories').select('name, slug').order('name');
   if (!data) return;
 
-  navList.innerHTML = data.map(c =>
-    `<li><a href="category.html?slug=${c.slug}" class="nav-link">${c.name}</a></li>`
-  ).join('');
+  if (navList) {
+    navList.innerHTML = data.map(c =>
+      `<li><a href="category.html?slug=${c.slug}" class="nav-link">${c.name}</a></li>`
+    ).join('');
+  }
+
+  if (mobileList) {
+    mobileList.innerHTML = data.map(c =>
+      `<a href="category.html?slug=${c.slug}" class="nav-link">${c.name}</a>`
+    ).join('');
+  }
 }
