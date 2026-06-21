@@ -150,6 +150,7 @@ function fillRecipeForm(r) {
   f.querySelector('#r-image-preview').style.display = r.image_url ? 'block' : 'none';
   f.querySelector('#r-current-image').value = r.image_url || '';
   document.getElementById('upload-label').textContent = r.image_url ? 'Changer l\'image' : '📷 Choisir une image';
+  document.getElementById('r-image-remove-btn').style.display = r.image_url ? 'inline-block' : 'none';
 
   const selectedCats = new Set(r.recipe_categories?.map(rc => rc.category_id) || []);
   f.querySelectorAll('.cat-checkbox').forEach(cb => {
@@ -182,6 +183,7 @@ function clearRecipeForm() {
   document.getElementById('r-image-preview').src = '';
   document.getElementById('r-image-preview').style.display = 'none';
   document.getElementById('upload-label').textContent = '📷 Choisir une image';
+  document.getElementById('r-image-remove-btn').style.display = 'none';
   document.getElementById('ingredients-rows').innerHTML = '';
   document.getElementById('steps-rows').innerHTML = '';
   addIngredientRow();
@@ -282,7 +284,19 @@ function setupRecipeModal() {
     preview.src = publicUrl;
     preview.style.display = 'block';
     label.textContent = 'Image uploadée ✓';
+    document.getElementById('r-image-remove-btn').style.display = 'inline-block';
     showToast('Image uploadée avec succès.', 'success');
+  });
+
+  // Retirer la photo
+  document.getElementById('r-image-remove-btn')?.addEventListener('click', () => {
+    document.getElementById('r-current-image').value = '';
+    document.getElementById('r-image-upload').value = '';
+    const preview = document.getElementById('r-image-preview');
+    preview.src = '';
+    preview.style.display = 'none';
+    document.getElementById('upload-label').textContent = '📷 Choisir une image';
+    document.getElementById('r-image-remove-btn').style.display = 'none';
   });
 
   // Form submit
