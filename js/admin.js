@@ -149,6 +149,7 @@ function fillRecipeForm(r) {
   f.querySelector('#r-image-preview').src = r.image_url || '';
   f.querySelector('#r-image-preview').style.display = r.image_url ? 'block' : 'none';
   f.querySelector('#r-current-image').value = r.image_url || '';
+  document.getElementById('upload-label').textContent = r.image_url ? 'Changer l\'image' : '📷 Choisir une image';
 
   const selectedCats = new Set(r.recipe_categories?.map(rc => rc.category_id) || []);
   f.querySelectorAll('.cat-checkbox').forEach(cb => {
@@ -177,7 +178,10 @@ function fillRecipeForm(r) {
 
 function clearRecipeForm() {
   document.getElementById('recipe-form').reset();
+  document.getElementById('r-current-image').value = '';
+  document.getElementById('r-image-preview').src = '';
   document.getElementById('r-image-preview').style.display = 'none';
+  document.getElementById('upload-label').textContent = '📷 Choisir une image';
   document.getElementById('ingredients-rows').innerHTML = '';
   document.getElementById('steps-rows').innerHTML = '';
   addIngredientRow();
